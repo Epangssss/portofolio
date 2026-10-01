@@ -9,24 +9,38 @@
         </div>
 
         <div class="reveal" style="max-width: 560px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 40px;">
-            <form onsubmit="event.preventDefault(); this.querySelector('button').textContent='Sent ✓'; this.querySelector('button').style.background='#16A34A';">
+            
+            @if(session('contact_success'))
+                <div style="padding: 12px; background: #dcfce3; color: #15803d; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: center;">
+                    {{ session('contact_success') }}
+                </div>
+            @endif
+
+            @if(session('contact_error'))
+                <div style="padding: 12px; background: #fee2e2; color: #b91c1c; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: center;">
+                    {{ session('contact_error') }}
+                </div>
+            @endif
+
+            <form action="{{ route('contact.send') }}" method="POST">
+                @csrf
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group">
                         <label for="name">Name</label>
-                        <input type="text" id="name" class="form-control" placeholder="Your name" required>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Your name" required>
                     </div>
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" id="email" class="form-control" placeholder="you@example.com" required>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="you@example.com" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="subject">Subject</label>
-                    <input type="text" id="subject" class="form-control" placeholder="Project inquiry">
+                    <input type="text" id="subject" name="subject" class="form-control" placeholder="Project inquiry" required>
                 </div>
                 <div class="form-group">
                     <label for="message">Message</label>
-                    <textarea id="message" class="form-control" placeholder="Tell me about your project..." required></textarea>
+                    <textarea id="message" name="message" class="form-control" placeholder="Tell me about your project..." required></textarea>
                 </div>
                 <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
                     Send message
