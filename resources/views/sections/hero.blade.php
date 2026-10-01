@@ -6,29 +6,52 @@
 
 <section id="hero" style="min-height: 100vh; display: flex; align-items: center; padding-top: 64px;">
     <div class="container">
-        <div style="max-width: 720px;">
+        <div class="hero-grid reveal" style="display: grid; grid-template-columns: 1fr 280px; gap: 60px; align-items: center;">
+            <div style="max-width: 720px;">
 
-            <p style="font-size: 15px; font-weight: 500; color: var(--blue-600); margin-bottom: 16px;">Hello there 👋</p>
+                <p style="font-size: 15px; font-weight: 500; color: var(--blue-600); margin-bottom: 16px;">Hello there 👋</p>
 
-            <h1 style="margin-bottom: 24px; color: var(--text-primary);">
-                I'm <span id="edwardName" style="transition: color 0.6s ease, font-family 0.4s ease;">{{ $firstName }}</span> {{ $lastName }}
-            </h1>
+                <h1 style="margin-bottom: 24px; color: var(--text-primary);">
+                    I'm <span id="edwardName" style="transition: color 0.6s ease, font-family 0.4s ease;">{{ $firstName }}</span> {{ $lastName }}
+                </h1>
 
-            <p style="font-size: 18px; max-width: 560px; margin-bottom: 40px; color: var(--text-muted);">
-                Web Developer specializing in <strong style="color: var(--text-body);">high-performance IT tech</strong>. 
-                I craft clean, scalable, and interactive digital experiences that deliver real results.
-            </p>
+                <p style="font-size: 18px; max-width: 560px; margin-bottom: 40px; color: var(--text-muted);">
+                    Web Developer specializing in <strong style="color: var(--text-body);">high-performance IT tech</strong>. 
+                    I craft clean, scalable, and interactive digital experiences that deliver real results.
+                </p>
 
-            <div class="hero-actions" style="display: flex; gap: 16px; flex-wrap: wrap;">
-                <a href="#projects" class="btn-primary">
-                    List Pekerjaan Saya
-                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </a>
-                <a href="#contact" class="btn-outline">CV Saya</a>
+                <div class="hero-actions" style="display: flex; gap: 16px; flex-wrap: wrap;">
+                    <a href="#projects" class="btn-primary">
+                        List Pekerjaan Saya
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="#contact" class="btn-outline">CV Saya</a>
+                </div>
+
             </div>
 
+            {{-- Avatar / Visual --}}
+            <div style="position: relative;" class="hero-avatar">
+                <div style="width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, var(--blue-50), var(--blue-100)); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: var(--shadow-md); border: 1px solid var(--border-color);">
+                    {{-- Eevee as the avatar --}}
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png" 
+                         style="width: 140px; height: 140px; image-rendering: pixelated; cursor: pointer; transition: transform 0.2s;" 
+                         alt="Eevee" onclick="playCry('eevee')" onmouseover="this.style.transform='scale(1.2) translateY(-10px)'" onmouseout="this.style.transform='scale(1) translateY(0)'">
+                </div>
+                <div style="text-align: center; margin-top: 16px;">
+                 
+                </div>
+            </div>
         </div>
     </div>
+    <style>
+        @media (max-width: 900px) {
+            .hero-grid { grid-template-columns: 1fr !important; text-align: center; gap: 40px; }
+            .hero-actions { justify-content: center; }
+            .hero-avatar { max-width: 280px; margin: 0 auto; }
+            #hero h1, #hero p { margin-left: auto; margin-right: auto; }
+        }
+    </style>
 </section>
 
     {{-- Edward Name: Font & Eeveelution Color Cycler --}}
@@ -112,7 +135,7 @@
         { name: 'sylveon',  id: 700 },
     ];
 
-    const SPRITE_SIZE = 48;
+    const SPRITE_SIZE = 38;
     const GRAVITY = 0.45;
     const BOUNCE = -3;
     const WALK_SPEED = 0.6;
@@ -132,13 +155,84 @@
         img.className = 'eevee-alive';
         img.style.width = SPRITE_SIZE + 'px';
         img.style.height = SPRITE_SIZE + 'px';
-        img.addEventListener('click', (e) => {
-            e.stopPropagation();
+        // ─── Drag and Drop / Jump ───
+        let isDragging = false;
+        let startX, startY;
+
+        const onPointerDown = (clientX, clientY) => {
             if (typeof playCry === 'function') playCry(ev.name);
-            // Jump on click!
             const s = sprites[i];
-            s.vy = JUMP_VEL;
+            s.isDragging = true;
             s.grounded = false;
+            s.vy = 0;
+            s.vx = 0;
+            s.dragOffsetX = clientX - s.x;
+            s.dragOffsetY = clientY - s.y;
+            isDragging = false;
+            startX = clientX;
+            startY = clientY;
+        };
+
+        const onPointerMove = (clientX, clientY) => {
+            const s = sprites[i];
+            if (!s.isDragging) return;
+            // If moved more than 5px, it's a drag
+            if (Math.abs(clientX - startX) > 5 || Math.abs(clientY - startY) > 5) {
+                isDragging = true;
+            }
+            s.x = clientX - s.dragOffsetX;
+            s.y = clientY - s.dragOffsetY;
+        };
+
+        const onPointerUp = () => {
+            const s = sprites[i];
+            if (s.isDragging) {
+                s.isDragging = false;
+                if (!isDragging) {
+                    // It was just a click, make it jump!
+                    s.vy = JUMP_VEL;
+                } else {
+                    // Let it fall naturally from where it was dropped
+                    s.state = 'falling';
+                }
+            }
+        };
+
+        // Mouse Events
+        img.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onPointerDown(e.clientX, e.clientY);
+
+            const onMouseMove = (moveEvent) => onPointerMove(moveEvent.clientX, moveEvent.clientY);
+            const onMouseUp = () => {
+                onPointerUp();
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+            };
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        });
+
+        // Touch Events
+        img.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onPointerDown(e.touches[0].clientX, e.touches[0].clientY);
+
+            const onTouchMove = (moveEvent) => {
+                moveEvent.preventDefault(); // Prevent scrolling while dragging
+                onPointerMove(moveEvent.touches[0].clientX, moveEvent.touches[0].clientY);
+            };
+            const onTouchEnd = () => {
+                onPointerUp();
+                document.removeEventListener('touchmove', onTouchMove);
+                document.removeEventListener('touchend', onTouchEnd);
+            };
+
+            document.addEventListener('touchmove', onTouchMove, { passive: false });
+            document.addEventListener('touchend', onTouchEnd);
         });
 
         world.appendChild(img);
@@ -193,6 +287,12 @@
     // ─── Physics Loop ───
     function update() {
         sprites.forEach(s => {
+            // Apply transform for dragged sprites, skip physics
+            if (s.isDragging) {
+                s.el.style.transform = `translate(${s.x}px, ${s.y}px) scaleX(${s.direction})`;
+                return;
+            }
+
             // Apply gravity if not grounded
             if (!s.grounded) {
                 s.vy += GRAVITY;
