@@ -26,6 +26,7 @@
             --gray-700: #374151;
             --gray-800: #1F2937;
             --gray-900: #111827;
+            --gray-1000: #040508ff;
 
             --bg-body: #FFFFFF;
             --bg-card: #FFFFFF;
