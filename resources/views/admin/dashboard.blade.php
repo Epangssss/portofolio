@@ -21,6 +21,7 @@
             --blue-500: #3B82F6;
             --blue-600: #2563EB;
             --radius-md: 12px;
+            --radius-mm: 22px;
         }
 
         body {
