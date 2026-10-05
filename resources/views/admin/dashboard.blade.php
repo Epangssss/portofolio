@@ -20,6 +20,7 @@
             --border-color: #334155;
             --blue-500: #3B82F6;
             --blue-600: #2563EB;
+            --blue-700: #19336bff;
             --radius-md: 12px;
             --radius-mm: 22px;
         }
