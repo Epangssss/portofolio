@@ -31,6 +31,7 @@
             --bg-body: #FFFFFF;
             --bg-half-body: #FFFFFF;
             --bg-card: #FFFFFF;
+            --bg-card-1: #c0a2a2ff;
             --bg-alt: var(--gray-50);
             --bg-navbar: rgba(255,255,255,0.85);
             --border-color: var(--gray-200);
