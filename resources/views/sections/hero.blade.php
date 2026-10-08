@@ -31,20 +31,212 @@
             </div>
 
             {{-- Avatar / Visual --}}
-            <div style="position: relative;" class="hero-avatar">
-                <div style="width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, var(--blue-50), var(--blue-100)); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: var(--shadow-md); border: 1px solid var(--border-color);">
-                    {{-- Eevee as the avatar --}}
-                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png" 
-                         style="width: 140px; height: 140px; image-rendering: pixelated; cursor: pointer; transition: transform 0.2s;" 
-                         alt="Eevee" onclick="playCry('eevee')" onmouseover="this.style.transform='scale(1.2) translateY(-10px)'" onmouseout="this.style.transform='scale(1) translateY(0)'">
+            <div style="position: relative; padding: 5%;" class="hero-avatar" id="heroAvatarWrap">
+
+                {{-- ═══ WRAPPER RING BELAKANG (z-index 1, dipotong setengah bawah) ═══ --}}
+                <div class="saturn-wrapper-back">
+                    <div class="saturn-ring saturn-ring-1">
+                        <div class="saturn-dot"></div>
+                        <div class="saturn-dot" style="top: auto; bottom: -4px; left: 25%;"></div>
+                    </div>
+                    <div class="saturn-ring saturn-ring-2">
+                        <div class="saturn-dot saturn-dot-lg"></div>
+                        <div class="saturn-dot" style="top: auto; bottom: -5px; left: 70%;"></div>
+                    </div>
+                    <div class="saturn-ring saturn-ring-3">
+                        <div class="saturn-dot"></div>
+                        <div class="saturn-dot saturn-dot-sm" style="left: auto; right: -3px; top: 50%; transform: translateY(-50%);"></div>
+                    </div>
                 </div>
-                <div style="text-align: center; margin-top: 16px;">
-                 
+
+                {{-- Container Wajik (z-index 5, di tengah) --}}
+                <div class="wajik-3d-wrap" id="wajik3d">
+                    <div class="wajik-container" style="width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, var(--blue-50), var(--blue-100)); transform: rotate(45deg) scale(1.15); border-radius: var(--radius-xl); box-shadow: var(--shadow-md), 0 0 40px rgba(59,130,246,0.08); border: 1px solid var(--border-color); overflow: hidden; position: relative; display: flex; justify-content: center; align-items: center;">
+                        
+                        {{-- Wrapper Gambar --}}
+                        <div style="transform: rotate(-45deg); width: 145%; height: 145%; position: absolute; display: flex; justify-content: center; align-items: flex-end;">
+                            
+                            {{-- Gambar utama --}}
+                            <img src="{{ asset('/img/test1.png') }}" 
+                                 class="hero-main-img"
+                                 style="width: 65%; max-height: 90%; object-fit: contain; transition: transform 0.4s ease, filter 0.4s ease; transform-origin: bottom; margin-bottom: 2%;" 
+                                 alt="Avatar">
+                                 
+                        </div>
+                    </div>
                 </div>
+
+                {{-- ═══ WRAPPER RING DEPAN (z-index 10, dipotong setengah atas) ═══ --}}
+                <div class="saturn-wrapper-front">
+                    <div class="saturn-ring saturn-ring-1">
+                        <div class="saturn-dot"></div>
+                        <div class="saturn-dot" style="top: auto; bottom: -4px; left: 25%;"></div>
+                    </div>
+                    <div class="saturn-ring saturn-ring-2">
+                        <div class="saturn-dot saturn-dot-lg"></div>
+                        <div class="saturn-dot" style="top: auto; bottom: -5px; left: 70%;"></div>
+                    </div>
+                    <div class="saturn-ring saturn-ring-3">
+                        <div class="saturn-dot"></div>
+                        <div class="saturn-dot saturn-dot-sm" style="left: auto; right: -3px; top: 50%; transform: translateY(-50%);"></div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
     <style>
+        /* ═══════════════════════════════════════════════ */
+        /* Saturn 2.5D — Ring depan menutupi, belakang tersembunyi */
+        /* ═══════════════════════════════════════════════ */
+
+        .hero-avatar {
+            perspective: 900px;
+        }
+
+        /* ─── Base ring ─── */
+        .saturn-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(59,130,246,0.2);
+            pointer-events: none;
+        }
+
+        /* ─── Ring 1 ─── */
+        .saturn-ring-1 {
+            width: 160%;
+            height: 160%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(65deg) rotateZ(10deg);
+            animation: saturnSpin1 10s linear infinite;
+            border-color: rgba(59,130,246,0.2);
+        }
+
+        /* ─── Ring 2 (ring utama, paling besar) ─── */
+        .saturn-ring-2 {
+            width: 185%;
+            height: 185%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(68deg) rotateZ(-5deg);
+            animation: saturnSpin2 14s linear infinite reverse;
+            border-width: 2.5px;
+            border-color: rgba(59,130,246,0.25);
+        }
+
+        /* ─── Ring 3 ─── */
+        .saturn-ring-3 {
+            width: 140%;
+            height: 140%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(62deg) rotateZ(18deg);
+            animation: saturnSpin3 18s linear infinite;
+            border-style: dashed;
+            border-color: rgba(59,130,246,0.15);
+        }
+
+        /* ─── BACK layer: di belakang wajik, dipotong dari horizontal 50% ke bawah ─── */
+        .saturn-wrapper-back {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            clip-path: polygon(-50% -50%, 150% -50%, 150% 50%, -50% 50%);
+            pointer-events: none;
+        }
+
+        /* ─── FRONT layer: di depan wajik, dipotong dari horizontal 50% ke atas ─── */
+        .saturn-wrapper-front {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            clip-path: polygon(-50% 50%, 150% 50%, 150% 150%, -50% 150%);
+            pointer-events: none;
+        }
+
+        /* ─── Keyframes ─── */
+        @keyframes saturnSpin1 {
+            from { transform: translate(-50%, -50%) rotateX(65deg) rotateZ(10deg) rotate(0deg); }
+            to   { transform: translate(-50%, -50%) rotateX(65deg) rotateZ(10deg) rotate(360deg); }
+        }
+        @keyframes saturnSpin2 {
+            from { transform: translate(-50%, -50%) rotateX(68deg) rotateZ(-5deg) rotate(0deg); }
+            to   { transform: translate(-50%, -50%) rotateX(68deg) rotateZ(-5deg) rotate(360deg); }
+        }
+        @keyframes saturnSpin3 {
+            from { transform: translate(-50%, -50%) rotateX(62deg) rotateZ(18deg) rotate(0deg); }
+            to   { transform: translate(-50%, -50%) rotateX(62deg) rotateZ(18deg) rotate(360deg); }
+        }
+
+        /* ─── Glowing Dots ─── */
+        .saturn-dot {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            background: var(--blue-500);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(59,130,246,0.7), 0 0 22px rgba(59,130,246,0.35);
+            top: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: saturnDotPulse 2.5s ease-in-out infinite;
+        }
+        .saturn-dot-lg {
+            width: 10px;
+            height: 10px;
+            top: -5px;
+            box-shadow: 0 0 14px rgba(59,130,246,0.8), 0 0 30px rgba(59,130,246,0.4);
+        }
+        .saturn-dot-sm {
+            width: 4px;
+            height: 4px;
+            top: -2px;
+            box-shadow: 0 0 6px rgba(59,130,246,0.5), 0 0 14px rgba(59,130,246,0.2);
+        }
+
+        @keyframes saturnDotPulse {
+            0%, 100% { opacity: 0.4; }
+            50%      { opacity: 1; }
+        }
+
+        /* ─── 3D Wajik Wrapper (z-index 5 = di tengah, antara back dan front ring) ─── */
+        .wajik-3d-wrap {
+            position: relative;
+            z-index: 5;
+            transition: transform 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        .wajik-3d-wrap:hover {
+            transform: scale(1.03);
+        }
+
+        /* ─── 3D Float animation on main image ─── */
+        .hero-main-img {
+            animation: imgFloat 4s ease-in-out infinite;
+        }
+        @keyframes imgFloat {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-8px); }
+        }
+        .hero-main-img:hover {
+            filter: drop-shadow(0 8px 20px rgba(59,130,246,0.25));
+            animation-play-state: paused;
+            transform: scale(1.06) translateY(-5px) !important;
+        }
+
+        /* ─── Dark mode ─── */
+        [data-theme="dark"] .saturn-ring { border-color: rgba(59,130,246,0.3); }
+        [data-theme="dark"] .saturn-ring-2 { border-color: rgba(59,130,246,0.4); }
+        [data-theme="dark"] .saturn-front { opacity: 1; }
+        [data-theme="dark"] .saturn-back { opacity: 0.15; }
+        [data-theme="dark"] .saturn-dot {
+            box-shadow: 0 0 14px rgba(59,130,246,0.9), 0 0 28px rgba(59,130,246,0.5);
+        }
+        [data-theme="dark"] .hero-main-img:hover {
+            filter: drop-shadow(0 8px 25px rgba(59,130,246,0.4));
+        }
+
         @media (max-width: 900px) {
             .hero-grid { grid-template-columns: 1fr !important; text-align: center; gap: 40px; }
             .hero-actions { justify-content: center; }
